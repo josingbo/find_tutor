@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="style.css">
+    <title>Find A Tutor</title>
+</head>
+
+<body>
+    <h1 class="title">Find A Tutor</h1>
+    <div id="homepage">
+        <h1>Hire a tutor in your area</h1>
+        <div id="tutors"></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.26.0/babel.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react@16/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@16/umd/react-dom.development.js"></script>
+
+    <script type="text/babel">
+        class Tutors extends React.Component {
+
+            state = {tutors: []}
+
+            handleSubmit = (e) => {
+                e.preventDefault()
+                const lng = this.refs.lng.value
+                const lat = this.refs.lat.value
+
+                fetch(`/api/tutors?lng=${lng}&lat=${lat}`)
+                    .then(data => data.json())
+                    .then(tutors => this.setState({tutors}))
+            }
+
+            render() {
+
+                let tutors = this.state.tutors.map(tutor => {
+                    return (
+                        <li key={tutor._id}>
+                            <span className={tutor.available ? 'green':'red'}></span>
+                            <span className="name">{tutor.name}</span>
+                            <span className="subject">{tutor.subject}</span>
+                            <span className="dist">{(tutor.dist.calculated).toFixed(3)}</span>
+                        </li>
+                    )
+                })
+
+                console.log(this.state.tutors)
+
+                return (
+                    <div id="tutor-container">
+                        <form id="search" onSubmit={this.handleSubmit}>
+                            <label>Enter your latitude</label>
+                            <input type="text" ref="lat" placeholder="latitude" required />
+                            <label>Enter your longitude</label>
+                            <input type="text" ref="lng" placeholder="longitude" required />
+                            <input type="submit" value="Find Tutors" />
+                        </form>
+                        <ul>{tutors}</ul>
+                    </div>
+                )
+            }
+        }
+
+        ReactDOM.render(<Tutors />, document.getElementById('tutors'))
+    </script>
+</body>
+
+</html>
