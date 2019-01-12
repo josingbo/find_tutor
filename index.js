@@ -1,17 +1,16 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const bodyParser = require('body-parser')
+import express from 'express'
+import mongoose from 'mongoose'
+import bodyParser from 'body-parser'
 
-const routes = require('./routes/api')
+import routes from './routes/api'
+import seedData from './seedData'
+import config from './config'
 
 const port = process.env.PORT || 4500
-
-import seedData from './seedData'
-
 const app = express()
 
 mongoose
-    .connect('mongodb://localhost/tutors_db', {
+    .connect(`${config.MONGO_URI}`, {
         useNewUrlParser: true
     }, (err, db) => {
         if (err) throw err
